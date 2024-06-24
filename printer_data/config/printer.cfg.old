@@ -1,0 +1,286 @@
+# Configuration File
+
+# Included Configurations
+[include shell_command.cfg]
+[include mainsail.cfg]
+[include timelapse.cfg]
+[include moonraker_obico_macros.cfg]
+[include led_effects.cfg]
+[include OrbiterSensor.cfg]
+[include shaper.cfg]
+#[include idm.cfg]
+[include carto.cfg]
+[include macros.cfg]
+[include fans.cfg]
+[exclude_object]
+
+# Printer Settings
+[printer]
+kinematics: corexy
+max_velocity: 600
+max_accel: 50000
+square_corner_velocity: 5
+max_z_velocity: 20
+max_z_accel: 1000
+
+# Microcontroller Configuration
+
+[mcu]
+#mcu octopus
+canbus_uuid: fcb286629ffd
+
+[mcu pi]
+serial: /tmp/klipper_host_mcu
+
+[mcu EBBCan]
+canbus_uuid: 0f09a2bf6f9a
+
+# Board Pins
+[board_pins]
+aliases:
+    # EXP1 header
+    EXP1_1=PE8, EXP1_2=PE7,
+    EXP1_3=PE9, EXP1_4=PE10,
+    EXP1_5=PE12, EXP1_6=PE13,    # Slot in the socket on this side
+    EXP1_7=PE14, EXP1_8=PE15,
+    EXP1_9=<GND>, EXP1_10=<5V>,
+
+    # EXP2 header
+    EXP2_1=PA6, EXP2_2=PA5,
+    EXP2_3=PB1, EXP2_4=PA4,
+    EXP2_5=PB2, EXP2_6=PA7,      # Slot in the socket on this side
+    EXP2_7=PC15, EXP2_8=<RST>,
+    EXP2_9=<GND>, EXP2_10=<5V>
+
+# G-code Settings
+[gcode_arcs]
+resolution: 0.1
+
+# Response Settings
+[respond]
+default_type: command
+
+# Stepper X Configuration
+[stepper_x]
+step_pin: PF13
+dir_pin: !PF12
+enable_pin: !PF14
+microsteps: 256
+rotation_distance: 40
+endstop_pin: EBBCan: PB6
+position_endstop: 389
+position_max: 389
+position_min: 0
+homing_speed: 200
+
+[tmc2209 stepper_x]
+uart_pin: PC4
+run_current: 1.5
+interpolate: False
+
+# Stepper Y Configuration
+[stepper_y]
+step_pin: PG0
+dir_pin: !PG1
+enable_pin: !PF15
+microsteps: 256
+rotation_distance: 40
+endstop_pin: ^PG9
+position_endstop: 365
+position_max: 365
+position_min: 0
+homing_speed: 200
+
+[tmc2209 stepper_y]
+uart_pin: PD11
+run_current: 1.5
+interpolate: False
+
+# LEFT Stepper Configuration
+[stepper_z]
+step_pin: PG4
+dir_pin: !PC1
+enable_pin: !PA0
+microsteps: 256
+rotation_distance: 2
+# common 
+endstop_pin: probe:z_virtual_endstop
+position_max: 365
+position_min: -10.0
+homing_speed: 10.0
+homing_retract_dist: 0
+
+[tmc2209 stepper_z]
+uart_pin: PC6
+run_current: 0.650
+interpolate: False
+
+# RIGHT Stepper Configuration
+[stepper_z1]
+step_pin: PF11
+dir_pin: !PG3
+enable_pin: !PG5
+microsteps: 256
+rotation_distance: 2
+
+[tmc2209 stepper_z1]
+uart_pin: PC7
+run_current: 0.650
+interpolate: False
+
+# REAR Stepper Configuration
+[stepper_z2]
+step_pin: PF9
+dir_pin: !PF10
+enable_pin: !PG2
+microsteps: 256
+rotation_distance: 2
+
+[tmc2209 stepper_z2]
+uart_pin: PF2
+run_current: 0.650
+interpolate: False
+
+# Bed Heater Configuration
+[heater_bed]
+heater_pin: PA2
+sensor_pin: PF3
+sensor_type: EPCOS 100K B57560G104F
+#control: pid
+#pid_Kp: 690.34
+#pid_Ki: 111.47
+#pid_Kd: 1068.83
+min_temp: 0
+max_temp: 130
+
+# Temperature Sensors Configuration
+[temperature_sensor raspberry_pi]
+sensor_type: temperature_host
+min_temp: 10
+max_temp: 100
+
+[temperature_sensor mcu_temp]
+sensor_type: temperature_mcu
+min_temp: 0
+max_temp: 100
+
+[temperature_sensor EBBCan]
+sensor_type: temperature_mcu
+sensor_mcu: EBBCan
+min_temp: 0
+max_temp: 100
+
+# Screws Tilt Adjust Configuration
+#[screws_tilt_adjust]
+#screw1: 55, 35
+#screw1_name: front left screw
+#screw2: 345, 35
+#screw2_name: front right screw
+#screw3: 345, 305
+#screw3_name: rear right screw
+#screw4: 55, 305
+#screw4_name: rear left screw
+#horizontal_move_z: 5.0
+#speed: 100
+#screw_thread: CW-M4
+
+# Extruder Configuration
+[extruder]
+step_pin: EBBCan: PD0
+dir_pin: EBBCan: PD1
+enable_pin: !EBBCan: PD2
+microsteps: 16
+full_steps_per_rotation: 200
+rotation_distance: 4.637
+nozzle_diameter: 0.400
+filament_diameter: 1.750
+max_extrude_only_distance: 500
+max_extrude_only_velocity: 120
+pressure_advance: 0.025             #to be calibrated
+pressure_advance_smooth_time: 0.03  #to be calibrated
+heater_pin: EBBCan: PB13
+sensor_type: EPCOS 100K B57560G104F
+sensor_pin: EBBCan: PA3
+min_temp: 0
+max_temp: 300
+
+[tmc2209 extruder]
+uart_pin: EBBCan: PA15
+interpolate: true
+run_current: 0.85 
+sense_resistor: 0.11 
+stealthchop_threshold: 0
+driver_TBL: 0
+driver_HEND: 6
+driver_HSTRT: 7
+driver_TOFF: 4
+
+
+[delayed_gcode led_ready_state]
+gcode:
+  status_ready
+
+#*# <---------------------- SAVE_CONFIG ---------------------->
+#*# DO NOT EDIT THIS BLOCK OR BELOW. The contents are auto-generated.
+#*#
+#*# [extruder]
+#*# control = pid
+#*# pid_kp = 22.768
+#*# pid_ki = 2.617
+#*# pid_kd = 49.521
+#*#
+#*# [heater_bed]
+#*# control = pid
+#*# pid_kp = 54.218
+#*# pid_ki = 1.396
+#*# pid_kd = 526.594
+#*#
+#*# [bed_mesh default]
+#*# version = 1
+#*# points =
+#*# 	0.262394, 0.216023, 0.165109, 0.122542, 0.088295, 0.053442, 0.021784, -0.019044, -0.037141, -0.056799, -0.072807, -0.087201, -0.104711, -0.117992, -0.121455, -0.123009, -0.134341, -0.149873, -0.128474, -0.162324
+#*# 	0.242181, 0.205572, 0.148645, 0.110655, 0.084642, 0.052197, 0.021032, -0.003556, -0.023966, -0.044026, -0.059377, -0.075086, -0.089804, -0.095413, -0.100928, -0.107081, -0.118512, -0.128253, -0.133546, -0.132175
+#*# 	0.197539, 0.155444, 0.111286, 0.082842, 0.057582, 0.024233, 0.006597, -0.007193, -0.024654, -0.043073, -0.061427, -0.076036, -0.082234, -0.085158, -0.089808, -0.095541, -0.105196, -0.113391, -0.092154, -0.116874
+#*# 	0.191223, 0.155448, 0.103825, 0.075511, 0.047678, 0.027901, 0.005826, -0.012508, -0.026381, -0.042071, -0.057440, -0.069687, -0.070882, -0.070281, -0.071966, -0.076411, -0.081051, -0.088879, -0.092758, -0.083670
+#*# 	0.170524, 0.136033, 0.085270, 0.063820, 0.038240, 0.013542, -0.001808, -0.018547, -0.029315, -0.042493, -0.055460, -0.063108, -0.065121, -0.063117, -0.063491, -0.062389, -0.064724, -0.074665, -0.058705, -0.074891
+#*# 	0.174064, 0.145061, 0.103024, 0.065528, 0.045768, 0.027967, 0.009287, -0.003449, -0.017442, -0.023922, -0.032210, -0.040931, -0.038023, -0.038469, -0.037842, -0.034313, -0.028261, -0.026825, -0.028972, -0.020001
+#*# 	0.159665, 0.118704, 0.079261, 0.067714, 0.047358, 0.028158, 0.005351, -0.008776, -0.013070, -0.019638, -0.021329, -0.024892, -0.023036, -0.021890, -0.020800, -0.014566, -0.005856, -0.007541, 0.026169, -0.004627
+#*# 	0.161116, 0.130416, 0.096610, 0.066951, 0.049484, 0.029354, 0.012774, 0.007391, -0.000138, -0.006311, -0.007336, -0.009114, -0.002568, 0.001555, 0.004008, 0.018227, 0.025866, 0.029543, 0.038130, 0.053402
+#*# 	0.152416, 0.101967, 0.078741, 0.064606, 0.046396, 0.029788, 0.022952, 0.014245, 0.011024, 0.007227, 0.008392, 0.008687, 0.016022, 0.024214, 0.029366, 0.037554, 0.048276, 0.055063, 0.059665, 0.071806
+#*# 	0.143445, 0.111908, 0.085226, 0.060816, 0.045535, 0.032934, 0.024622, 0.021974, 0.021206, 0.023309, 0.028575, 0.035557, 0.043925, 0.049999, 0.059318, 0.065984, 0.077202, 0.081458, 0.098894, 0.114615
+#*# 	0.152715, 0.094738, 0.069817, 0.055150, 0.036561, 0.025506, 0.023155, 0.023396, 0.028039, 0.030740, 0.036071, 0.041311, 0.053018, 0.061540, 0.071513, 0.085292, 0.097687, 0.106127, 0.116263, 0.135566
+#*# 	0.127006, 0.087843, 0.065149, 0.039279, 0.029008, 0.016852, 0.013251, 0.013233, 0.018796, 0.024215, 0.028730, 0.036861, 0.045419, 0.066980, 0.077729, 0.100037, 0.116578, 0.129490, 0.150746, 0.174587
+#*# 	0.123676, 0.063341, 0.040807, 0.028026, 0.013325, 0.011689, 0.002405, 0.004447, 0.011287, 0.024558, 0.035747, 0.048313, 0.068677, 0.081024, 0.095889, 0.115344, 0.128760, 0.150108, 0.163739, 0.197373
+#*# 	0.090935, 0.041320, 0.023267, -0.000305, -0.001842, -0.009203, -0.009661, -0.011314, -0.000638, 0.012678, 0.028517, 0.047873, 0.065525, 0.085658, 0.101050, 0.122924, 0.135980, 0.159095, 0.190924, 0.222651
+#*# 	0.088070, 0.019718, -0.002577, -0.010807, -0.023019, -0.026859, -0.029250, -0.021232, -0.007512, 0.009530, 0.024303, 0.041709, 0.067747, 0.083238, 0.103547, 0.125706, 0.150728, 0.179544, 0.199833, 0.237295
+#*# 	0.048702, -0.004945, -0.029303, -0.045460, -0.044830, -0.057557, -0.051438, -0.048548, -0.027463, -0.010893, 0.006303, 0.021597, 0.037859, 0.062588, 0.081631, 0.108521, 0.135045, 0.164233, 0.200779, 0.233737
+#*# 	0.025160, -0.041103, -0.071809, -0.080321, -0.084087, -0.084508, -0.084901, -0.071945, -0.053445, -0.031831, -0.019210, 0.002958, 0.024839, 0.042858, 0.068092, 0.097975, 0.117930, 0.155890, 0.190897, 0.224829
+#*# 	-0.028364, -0.088781, -0.108143, -0.121152, -0.118278, -0.122387, -0.115100, -0.105263, -0.083119, -0.067853, -0.044271, -0.017681, 0.010081, 0.024196, 0.049828, 0.076208, 0.105662, 0.146776, 0.187257, 0.227596
+#*# 	-0.053264, -0.110962, -0.143433, -0.149670, -0.150285, -0.140103, -0.134366, -0.128176, -0.107582, -0.085931, -0.070111, -0.040345, -0.006856, 0.011169, 0.029339, 0.066698, 0.095608, 0.145545, 0.184968, 0.226813
+#*# 	-0.098148, -0.157000, -0.190664, -0.186951, -0.192010, -0.183294, -0.177271, -0.162727, -0.147878, -0.124320, -0.102706, -0.077173, -0.052674, -0.019021, 0.015675, 0.048492, 0.089848, 0.140877, 0.181793, 0.225693
+#*# x_count = 20
+#*# y_count = 20
+#*# mesh_x_pps = 0
+#*# mesh_y_pps = 0
+#*# algo = direct
+#*# tension = 0.2
+#*# min_x = 20.0
+#*# max_x = 340.0
+#*# min_y = 20.0
+#*# max_y = 340.0
+#*#
+#*# [cartographer model default]
+#*# model_coef = 1.3880177923168364,
+#*# 	  1.840680233876067,
+#*# 	  0.7777797877262719,
+#*# 	  0.17767825314865995,
+#*# 	  0.27324201336317233,
+#*# 	  0.8333165395630009,
+#*# 	  -0.002114644861138473,
+#*# 	  -0.7780752309599035,
+#*# 	  0.11475671258370482,
+#*# 	  0.3796836726256322
+#*# model_domain = 3.207266285696047e-07,3.3292423292085154e-07
+#*# model_range = 0.100000,5.000000
+#*# model_temp = 26.645638
+#*# model_offset = 0.15000
